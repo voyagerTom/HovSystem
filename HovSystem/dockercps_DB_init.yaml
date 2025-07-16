@@ -1,0 +1,50 @@
+services:
+  #創建DB
+  psqldb:
+    image: postgres:16
+    container_name: my-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      #這段會在啟動時預設建立database
+      POSTGRES_DB: ${db_name}
+      POSTGRES_USER: ${db_user}
+      POSTGRES_PASSWORD: ${db_pwd}
+    networks:
+      tom_network:
+    volumes:
+      #將 SQL 掛進容器
+      - ./initdb/init.sql:/db/init.sql
+    command: > #啟動時就執行該卦入的SQL
+      bash -c "
+      docker-entrypoint.sh postgres & 
+      sleep 2 &&
+      psql -U ${db_user} -d ${db_name} -f /db/init.sql &&
+      wait
+      "
+
+  #創建DB UI介面
+  pgadmin:
+    image: dpage/pgadmin4:7
+    container_name: myPgadm
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${pgad_mail}
+      PGADMIN_DEFAULT_PASSWORD: ${pgad_pwd}
+
+    networks:
+      tom_network:
+    ports:
+      - "8079:80"
+    depends_on:
+      - psqldb
+
+#建立專用網段
+networks:
+  tom_network:
+    name: tom_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "192.168.1.0/24" # 指定子網

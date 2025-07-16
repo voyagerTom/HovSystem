@@ -1,0 +1,52 @@
+services:
+  hov_psg:
+    image: voyagerdk/hov_passenger:2.0.0 #從dockerhub抓取
+    #image: hov_passenger:2.0.0
+    #container_name: hov_psg
+    networks:
+      tom_network:
+        #ipv4_address: 192.168.1.60
+    volumes:
+      - ./config/app_passenger.properties:/app/app_passenger.properties
+
+  hov_driver:
+    image: voyagerdk/hov_driver:2.0.0 #從dockerhub抓取
+    #container_name: hov_driver
+    networks:
+      tom_network:
+        #ipv4_address: 192.168.1.70
+
+    volumes:
+      - ./config/app_driver.properties:/app/app_driver.properties
+
+  hov_admin:
+    image: voyagerdk/hov_admin:2.0.0 #從dockerhub抓取
+    #container_name: hov_admin
+    networks:
+      tom_network:
+        # ipv4_address: 192.168.1.80
+
+    volumes:
+      - ./config/app_admin.properties:/app/app_admin.properties
+
+  #創建nginx 服務
+  hov_ngx:
+    image: nginx:1.21.0-alpine
+    container_name: hov_ngx
+    networks:
+      tom_network:
+        ipv4_address: 192.168.1.88
+    ports:
+      - "8888:80"
+    volumes: #把本地資料掛到nginx
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/index.html:/usr/share/nginx/html/index.html
+
+#建立專用網段
+networks:
+  tom_network:
+    name: tom_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "192.168.1.0/24" # 指定子網
