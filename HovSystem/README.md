@@ -2,7 +2,9 @@
 
 ### 【檔案說明】
 dockercps_DB_init.yaml: 是建立資料庫並初始化
+
 dockercps_hov_service.yaml: 是建立各項服務並初始化
+
 .env: compose啟動所需的變數資料，使用者可自行設定
 
 
