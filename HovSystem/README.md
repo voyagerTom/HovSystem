@@ -15,13 +15,13 @@
 
 <!--建立database-->
 
-1.  docker-compose -f .\dockercps\DB_init.yaml up -d
+1.  docker-compose -f .\dockercps_DB_init.yaml up -d
 
     _#建立 database，待容器出現
     **database system is ready to accept connections**
     在進行步驟 2_
 
-2.  docker-compose -f .\dockercps\hov\service.yaml up -d
+2.  docker-compose -f .\dockercps_hov_service.yaml up -d
 
     _#啟動服務_
 
